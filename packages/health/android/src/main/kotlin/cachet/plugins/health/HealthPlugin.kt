@@ -2187,10 +2187,10 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             }
         scope.launch {
             try {
-                healthConnectClient.insertRecords(listOf(record))
-                result.success(true)
+                val ids = healthConnectClient.insertRecords(listOf(record))
+                result.success(ids)
             } catch (e: Exception) {
-                result.success(false)
+                result.success([])
             }
         }
     }
@@ -2265,10 +2265,10 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                         ),
                     )
                 }
-                healthConnectClient.insertRecords(
+                val ids = healthConnectClient.insertRecords(
                     list,
                 )
-                result.success(true)
+                result.success(ids)
                 Log.i(
                     "FLUTTER_HEALTH::SUCCESS",
                     "[Health Connect] Workout was successfully added!"
@@ -2280,7 +2280,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 )
                 Log.w("FLUTTER_HEALTH::ERROR", e.message ?: "unknown error")
                 Log.w("FLUTTER_HEALTH::ERROR", e.stackTrace.toString())
-                result.success(false)
+                result.success([])
             }
         }
     }
