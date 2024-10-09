@@ -13,6 +13,30 @@ class HealthValue extends Serializable {
   Map<String, dynamic> toJson() => _$HealthValueToJson(this);
 }
 
+class WriteResponse {
+  final List<String> uuids;
+  final String? error;
+  final bool success;
+
+  WriteResponse({
+    required this.uuids,
+    this.error,
+    required this.success,
+  });
+
+  factory WriteResponse.fromJson(Map<dynamic, dynamic>? json) => WriteResponse(
+        uuids: (json?['uuids'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+        error: json?['error'] as String?,
+        success: (json?['success'] as bool?) ?? false,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'uuids': uuids,
+        'error': error,
+        'success': success,
+      };
+}
+
 /// A numerical value from Apple HealthKit or Google Health Connect
 /// such as integer or double. E.g. 1, 2.9, -3
 ///

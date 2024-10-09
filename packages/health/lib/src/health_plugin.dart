@@ -343,7 +343,7 @@ class Health {
   ///
   /// Values for Sleep and Headache are ignored and will be automatically assigned
   /// the default value.
-  Future<List<String>> writeHealthData({
+  Future<WriteResponse> writeHealthData({
     required double value,
     HealthDataUnit? unit,
     required HealthDataType type,
@@ -408,8 +408,8 @@ class Health {
       'endTime': endTime.millisecondsSinceEpoch,
       'recordingMethod': recordingMethod.toInt(),
     };
-    List<String>? success = await _channel.invokeMethod('writeData', args);
-    return success ?? [];
+    Map<dynamic, dynamic>? response = await _channel.invokeMethod('writeData', args);
+    return WriteResponse.fromJson(response);
   }
 
   /// Deletes all records of the given [type] for a given period of time.
@@ -523,7 +523,7 @@ class Health {
           type: HealthDataType.BLOOD_OXYGEN,
           startTime: startTime,
           endTime: endTime,
-          recordingMethod: recordingMethod)).isNotEmpty;
+          recordingMethod: recordingMethod)).success;
     } else if (Platform.isAndroid) {
       Map<String, dynamic> args = {
         'value': saturation,
@@ -1133,7 +1133,7 @@ class Health {
   ///  - [title] The title of the workout.
   ///    *ONLY FOR HEALTH CONNECT* Default value is the [activityType], e.g. "STRENGTH_TRAINING".
   ///  - [recordingMethod] The recording method of the data point, automatic by default (on iOS this can only be automatic or manual).
-  Future<List<String>> writeWorkoutData({
+  Future<WriteResponse> writeWorkoutData({
     required HealthWorkoutActivityType activityType,
     required DateTime start,
     required DateTime end,
@@ -1170,8 +1170,8 @@ class Health {
       'title': title,
       'recordingMethod': recordingMethod.toInt(),
     };
-    final List<String>? result = await _channel.invokeMethod('writeWorkoutData', args);
-    return result ?? [];
+    final Map<dynamic, dynamic>? result = await _channel.invokeMethod('writeWorkoutData', args);
+    return WriteResponse.fromJson(result);
   }
 
   /// Check if the given [HealthWorkoutActivityType] is supported on the iOS platform
