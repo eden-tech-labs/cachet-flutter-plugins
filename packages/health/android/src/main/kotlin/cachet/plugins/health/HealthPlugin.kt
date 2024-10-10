@@ -135,7 +135,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     ) {
         handler?.post { mResult?.error(errorCode, errorMessage, errorDetails) }
     }
-    
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         return false
     }
@@ -225,9 +225,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         } else {
             mResult?.success(true)
             Log.i("FLUTTER_HEALTH", "${permissionGranted.size} Health Connect permissions were granted!")
-            
+
             // log the permissions granted for debugging
-            Log.i("FLUTTER_HEALTH", "Permissions granted: $permissionGranted") 
+            Log.i("FLUTTER_HEALTH", "Permissions granted: $permissionGranted")
         }
     }
 
@@ -488,7 +488,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         }
         result.success(healthConnectStatus)
     }
-    
+
     /** Filter records by recording methods */
     private fun filterRecordsByRecordingMethods(
         recordingMethodsToFilter: List<Int>,
@@ -2187,10 +2187,22 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             }
         scope.launch {
             try {
-                val ids = healthConnectClient.insertRecords(listOf(record))
-                result.success(ids)
+                val response = healthConnectClient.insertRecords(listOf(record))
+                result.success(
+                    mapOf(
+                        "uuids" to response.recordIdsList,
+                        "error" to null,
+                        "success" to true
+                    )
+                )
             } catch (e: Exception) {
-                result.success([])
+                result.success(
+                    mapOf(
+                        "uuids" to emptyList<String>(),
+                        "error" to e.message,
+                        "success" to false
+                    )
+                )
             }
         }
     }
@@ -2265,10 +2277,16 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                         ),
                     )
                 }
-                val ids = healthConnectClient.insertRecords(
+                val response = healthConnectClient.insertRecords(
                     list,
                 )
-                result.success(ids)
+                result.success(
+                    mapOf(
+                        "uuids" to response.recordIdsList,
+                        "error" to null,
+                        "success" to true
+                    )
+                )
                 Log.i(
                     "FLUTTER_HEALTH::SUCCESS",
                     "[Health Connect] Workout was successfully added!"
@@ -2280,7 +2298,13 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 )
                 Log.w("FLUTTER_HEALTH::ERROR", e.message ?: "unknown error")
                 Log.w("FLUTTER_HEALTH::ERROR", e.stackTrace.toString())
-                result.success([])
+                result.success(
+                    mapOf(
+                        "uuids" to emptyList<String>(),
+                        "error" to e.message,
+                        "success" to false
+                    )
+                )
             }
         }
     }
