@@ -715,7 +715,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     print("Error Saving Workout. Sample: \(err.localizedDescription)")
                 }
                 DispatchQueue.main.async {
-                    result(success ? [workout.uuid.uuidString] : [])
+                    result(["uuids": success ? [workout.uuid.uuidString] : [], "error": error?.localizedDescription, "success": success])
                 }
             })
     }
